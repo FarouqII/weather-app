@@ -1,5 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ESLintPlugin = require("eslint-webpack-plugin");
 
 module.exports = {
   mode: "development",
@@ -12,7 +13,7 @@ module.exports = {
   devtool: "eval-source-map",
   devServer: {
     static: {
-        directory: path.resolve(__dirname, 'dist'),
+      directory: path.resolve(__dirname, "dist"),
     },
     open: true,
     port: 3000,
@@ -22,6 +23,11 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: "./src/template.html",
+    }),
+    new ESLintPlugin({
+      extensions: ["js", "jsx"],
+      emitWarning: true,
+      fix: true,
     }),
   ],
   module: {
@@ -33,7 +39,7 @@ module.exports = {
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: "asset/resource",
-      }
+      },
     ],
   },
 };
