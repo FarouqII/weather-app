@@ -20,7 +20,7 @@
     --bg-dark: oklch(0.92 0.085 255);
     --bg: oklch(0.6093 0.1819 257.29);
     --bg-light: oklch(0.7931 0.1175 222.61);
-    --text: oklch(0.15 0.17 255);
+    --text: oklch(0.96 0.1 250);
     --text-muted: oklch(0.4 0.17 255);
     --highlight: oklch(1 0.17 255);
     --border: 1px solid oklch(0.6 0.17 255);
@@ -129,7 +129,7 @@ input {
     background: none;
     border: none;
     color: var(--text);
-    padding-left: 15px;
+    text-align: center;
 }
 
 input:focus {
