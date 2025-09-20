@@ -1,10 +1,11 @@
-export async function getWeather() {
-  const key = "5MRJ4EEB79MXA7S7RNMQABFME";
+export async function getWeather(city) {
+  const keyWeather = "5MRJ4EEB79MXA7S7RNMQABFME";
   const response = await fetch(
-    `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/jeddah?key=${key}`,
+    `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}?key=${keyWeather}`,
   );
   const weatherData = await response.json();
-  const data = {
+  console.log(weatherData);
+  return {
     current: {
       temp: weatherData.days[0].temp,
       feel: weatherData.days[0].feelslike,
@@ -17,5 +18,16 @@ export async function getWeather() {
       day4: weatherData.days[4].temp,
     },
   };
-  return data;
+}
+
+export async function getCountry(city) {
+  const keyMap = "pk.c06ce897705203c98dfae0362dfdab7a";
+  const response = await fetch(
+    `https://us1.locationiq.com/v1/search.php?key=${keyMap}&q=${city}&format=json`,
+  );
+  const countryData = await response.json();
+  const displayName = countryData[0].display_name;
+  console.log(countryData);
+  const nameArr = displayName.split(", ");
+  return nameArr[nameArr.length - 1];
 }

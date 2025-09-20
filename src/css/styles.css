@@ -47,6 +47,22 @@ a, button {
 body {
     font-family: "Rubik";
     color: var(--text);
+    overflow: hidden;
+}
+
+#waiting {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 5rem;
+    top: 0;
+    min-width: 100vw;
+    min-height: 100vh;
+    background-color: var(--text-muted);
+    backdrop-filter: blur(20px);
+    z-index: 10;
+    position: absolute;
+    transition: all 0.3s ease;
 }
 
 #content {

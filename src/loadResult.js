@@ -1,18 +1,19 @@
 import more from "./assets/icons/more.svg";
 import logo from "./assets/icons/logo.svg";
 import weatherTemp from "./assets/icons/weather/sunny-cloudy.svg";
-import { getWeather } from "./api";
+import { getCountry, getWeather } from "./api";
 
-export async function loadResult() {
-  const weatherData = await getWeather();
+export async function loadResult(city) {
+  const weatherData = await getWeather(city);
   const mainDiv = document.getElementById("main");
+  const country = await getCountry(city);
   mainDiv.innerHTML = `
         <div id="brief">
             <img src="#" id="weather-img">
             <div id="brief-info">
                 <div id="name">
-                    <h1>Saudi Arabia</h1>
-                    <h2>Riyadh</h2>
+                    <h1>${country}</h1>
+                    <h2>${city}</h2>
                 </div>
                 <h2>${weatherData.current.temp}°F</h2>
             </div>
