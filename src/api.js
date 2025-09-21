@@ -10,14 +10,26 @@ export async function getWeather(city) {
       temp: weatherData.days[0].temp,
       feel: weatherData.days[0].feelslike,
       humidity: weatherData.days[0].humidity,
-      conditions: weatherData.currentConditions.conditions.split(", ")[0],
+      conditions: weatherData.currentConditions.conditions.split(" ").join(""),
       time: weatherData.currentConditions.datetime,
     },
     forecast: {
-      day1: weatherData.days[1].temp,
-      day2: weatherData.days[2].temp,
-      day3: weatherData.days[3].temp,
-      day4: weatherData.days[4].temp,
+      day0: {
+        temp: weatherData.days[1].temp,
+        conditions: weatherData.days[1].conditions.split(" ").join(""),
+      },
+      day1: {
+        temp: weatherData.days[2].temp,
+        conditions: weatherData.days[2].conditions.split(" ").join(""),
+      },
+      day2: {
+        temp: weatherData.days[3].temp,
+        conditions: weatherData.days[3].conditions.split(" ").join(""),
+      },
+      day3: {
+        temp: weatherData.days[4].temp,
+        conditions: weatherData.days[4].conditions.split(" ").join(""),
+      },
     },
   };
 }
