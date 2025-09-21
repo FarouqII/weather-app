@@ -10,6 +10,8 @@ export async function getWeather(city) {
       temp: weatherData.days[0].temp,
       feel: weatherData.days[0].feelslike,
       humidity: weatherData.days[0].humidity,
+      conditions: weatherData.currentConditions.conditions.split(", ")[0],
+      time: weatherData.currentConditions.datetime,
     },
     forecast: {
       day1: weatherData.days[1].temp,
@@ -27,7 +29,6 @@ export async function getCountry(city) {
   );
   const countryData = await response.json();
   const displayName = countryData[0].display_name;
-  console.log(countryData);
   const nameArr = displayName.split(", ");
   return nameArr[nameArr.length - 1];
 }

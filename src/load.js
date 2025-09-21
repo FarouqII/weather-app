@@ -1,12 +1,17 @@
 import more from "./assets/icons/more.svg";
 import logo from "./assets/icons/logo.svg";
-import weatherTemp from "./assets/icons/weather/sunny-cloudy.svg";
+import weatherTemp from "./assets/icons/weather/sunnyCloudy.svg";
 import { getCountry, getWeather } from "./api";
 
 export async function loadResult(city) {
+  city = capitalize(city);
   const weatherData = await getWeather(city);
   const mainDiv = document.getElementById("main");
   const country = await getCountry(city);
+  const hour = weatherData.current.time.split(":")[0];
+  const timeOfDay = hour < 6 || hour > 18 ? "" : "day";
+  console.log(hour);
+  document.getElementById("content").classList = timeOfDay;
   mainDiv.innerHTML = `
         <div id="brief">
             <img src="#" id="weather-img">
@@ -64,14 +69,60 @@ export async function loadResult(city) {
     });
   }
 
-  const moreBtn = document.getElementById("more");
-  const logoBtn = document.getElementById("logo");
+  loadImages();
   const weatherImg = document.getElementById("weather-img");
   const tableTiles = document.querySelectorAll(".table-img");
 
-  moreBtn.src = more;
-  logoBtn.src = logo;
   weatherImg.src = weatherTemp;
 
   for (const tile of tableTiles) tile.src = weatherTemp;
+}
+
+export function loadHome() {
+  const mainDiv = document.getElementById("main");
+  mainDiv.innerHTML = `
+        <img id="home-logo" src="#">
+        <p>This is a pretty weather app mate</p>
+    `;
+  loadImages();
+  document.getElementById("home-logo").src = logo;
+
+  const icons = importAll(
+    require.context("./assets/icons/weather", false, /\.svg$/),
+  );
+  console.log(icons);
+}
+
+function loadImages() {
+  const moreBtn = document.getElementById("more");
+  const logoBtn = document.getElementById("logo");
+
+  moreBtn.src = more;
+  logoBtn.src = logo;
+}
+
+function importAll(r) {
+  let icons = {};
+  r.keys().forEach((key) => {
+    const name = key.replace("./", "").replace(".svg", "");
+    icons[name] = r(key);
+  });
+  return icons;
+}
+
+/*function loadWeatherIcon(temp) {
+  const icons = importAll(
+    require.context("./assets/icons/weather", false, /\.svg$/),
+  );
+  switch (temp) {
+    case "clear":
+      return icons.sunny - clear;
+    case "rain":
+      return icons.rain;
+  }
+}*/
+
+function capitalize(word) {
+  if (!word) return "";
+  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 }

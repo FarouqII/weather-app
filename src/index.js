@@ -1,6 +1,6 @@
 import "./css/reset.css";
 import "./css/styles.css";
-import { loadResult } from "./loadResult";
+import { loadHome, loadResult } from "./load";
 
 const searchBar = document.getElementById("searchInput");
 const waitingDiv = document.getElementById("waiting");
@@ -12,22 +12,33 @@ searchBar.addEventListener("keydown", (event) => {
     if (!city) return;
     console.log("Searching for:", city);
     searchCity(city);
+    searchBar.value = "";
   }
 });
 
 async function searchCity(city) {
   try {
-    waitingDiv.style.display = "flex"; // show waiting screen
-    await loadResult(city); // wait for loadResult to finish
+    showWaiting();
+    await loadResult(city);
   } catch (err) {
-    console.error(err); // handle any errors
+    console.error(err);
   } finally {
-    waitingDiv.style.display = "none"; // always hide waiting screen
+    hideWaiting();
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  loadResult("Berlin").finally(() => {
-    waitingDiv.style.display = "none";
-  });
+  Promise.resolve()
+    .then(() => loadHome())
+    .finally(() => {
+      hideWaiting();
+    });
 });
+
+function showWaiting() {
+  waitingDiv.classList.add("active");
+}
+
+function hideWaiting() {
+  waitingDiv.classList.remove("active");
+}

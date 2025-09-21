@@ -52,6 +52,8 @@ body {
 
 #waiting {
     display: flex;
+    opacity: 0;
+    visibility: hidden;
     justify-content: center;
     align-items: center;
     font-size: 5rem;
@@ -62,8 +64,13 @@ body {
     backdrop-filter: blur(20px);
     z-index: 10;
     position: absolute;
-    transition: all 0.3s ease;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
+
+    #waiting.active {
+        opacity: 1;
+        visibility: visible;
+    }
 
 #content {
     display: flex;
@@ -165,6 +172,9 @@ input:focus {
     width: 90%;
     height: 100%;
 }
+
+    #home-logo { width: 12.5vw; }
+    p { font-size: 1.25rem; }
 
     #brief {
         display: flex;
