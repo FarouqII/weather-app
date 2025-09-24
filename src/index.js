@@ -4,6 +4,7 @@ import { loadHome, loadResult } from "./load";
 
 const searchBar = document.getElementById("searchInput");
 const waitingDiv = document.getElementById("waiting");
+const unitButtons = document.querySelectorAll(".unitBtn");
 
 searchBar.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
@@ -15,6 +16,15 @@ searchBar.addEventListener("keydown", (event) => {
     searchBar.value = "";
   }
 });
+
+for (const button of unitButtons) {
+  button.addEventListener("click", (e) => {
+    e.preventDefault();
+    localStorage.setItem("unit", button.id);
+    if (document.getElementById("name"))
+      loadResult(document.querySelector("h2").innerText);
+  });
+}
 
 async function searchCity(city) {
   try {

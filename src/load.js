@@ -20,6 +20,7 @@ const conditionToIcon = {
 
 export async function loadResult(city) {
   city = capitalize(city);
+  const unit = checkUnit();
   const weatherData = await getWeather(city);
   const mainDiv = document.getElementById("main");
   const country = await getCountry(city);
@@ -34,13 +35,13 @@ export async function loadResult(city) {
                     <h1>${country}</h1>
                     <h2>${city}</h2>
                 </div>
-                <h2>${Math.round(weatherData.current.temp)}°F</h2>
+                <h2>${getTemp(weatherData.current.temp, unit)}</h2>
             </div>
         </div>
         <div id="details">
             <div class="details-tile">
                 <h3 style="font-size: 2rem;">Real Feel</h3>
-                <h1 style="font-size: 5rem;">${Math.round(weatherData.current.feel)}°F</h1>
+                <h1 style="font-size: 5rem;">${getTemp(weatherData.current.feel, unit)}</h1>
             </div>
             <div class="details-tile">
                 <h3 style="font-size: 2rem;">Humidity</h3>
@@ -62,16 +63,22 @@ export async function loadResult(city) {
                             <td><img class="table-img" src="#"></td>
                         </tr>
                         <tr>
-                            <td>${Math.round(weatherData.forecast.day0.temp)}°F</td>
-                            <td>${Math.round(weatherData.forecast.day1.temp)}°F</td>
-                            <td>${Math.round(weatherData.forecast.day2.temp)}°F</td>
-                            <td>${Math.round(weatherData.forecast.day3.temp)}°F</td>
+                            <td>${getTemp(weatherData.forecast.day0.temp, unit)}</td>
+                            <td>${getTemp(weatherData.forecast.day1.temp, unit)}</td>
+                            <td>${getTemp(weatherData.forecast.day2.temp, unit)}</td>
+                            <td>${getTemp(weatherData.forecast.day3.temp, unit)}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     `;
+
+  function getTemp(temp, unit) {
+    return unit === "fahrenheit"
+      ? `${Math.round(temp)}°F`
+      : `${Math.round(toCelsius(temp))}°C`;
+  }
 
   function getFutureDateLabel(daysFromToday) {
     const date = new Date();
@@ -96,6 +103,10 @@ export async function loadResult(city) {
     const forecastConditions =
       weatherData.forecast[`day${i}`].conditions.split(",")[0];
     tableTiles[i].src = icons[conditionToIcon[forecastConditions]];
+  }
+
+  function toCelsius(fahrenheit) {
+    return ((fahrenheit - 32) * 5) / 9;
   }
 }
 
@@ -132,4 +143,24 @@ function importAll(r) {
 function capitalize(word) {
   if (!word) return "";
   return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+}
+
+function checkUnit() {
+  if (localStorage.getItem("unit") !== null) {
+    return localStorage.getItem("unit");
+  } else {
+    const dialogBox = document.getElementById("dialog");
+    const form = document.querySelector("form");
+
+    dialogBox.style.visibility = "visible";
+    form.style.display = "flex";
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const value = document.querySelector("select").value;
+      localStorage.setItem("unit", value);
+      console.log("submitted", value);
+      dialogBox.style.visibility = "hidden";
+    });
+  }
 }

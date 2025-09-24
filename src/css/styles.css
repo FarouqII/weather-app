@@ -35,7 +35,7 @@
     --tile-bg: transparent;
 }
 
-a, button {
+a, button, select, option {
     cursor: pointer;
 }
 
@@ -124,6 +124,21 @@ ul {
 #logo {
     width: 3rem;
 }
+
+#unitsButtons {
+    font-size: 1.5rem;
+}
+
+    .unitBtn {
+        background: none;
+        border: none;
+        color: var(--text);
+        transition: color 0.3s ease;
+    }
+
+    .unitBtn:hover {
+        color: var(--text-muted);
+    }
 
 #search {
     display: flex;
@@ -250,3 +265,47 @@ input:focus {
             table { text-align: center; }
             .table-img { width: 10vw; }
             tr > td { font-size: 1.4rem; }
+
+#dialog {
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg);
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+}
+    form {
+        width: 20%;
+        height: 15%;
+        border: var(--border);
+        padding: 1vw 2vw;
+        border-radius: 15px;
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
+        form > div {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+            select {
+                padding: 5px;
+                color: var(--text);
+            }
+            #submit {
+                color: var(--text-muted);
+                transition: all 0.3s ease;
+            }
+            #submit:hover {
+                background-color: var(--text-muted);
+                color: var(--bg-light);
+            }
+            select, #submit {
+                background-color: var(--bg-light);
+                border: none;
+                border-radius: 5px;
+            }
