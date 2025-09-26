@@ -1,25 +1,5 @@
 :root {
-    --bg-dark: oklch(0.1 0.055 250);
-    --bg: oklch(0.15 0.055 250);
-    --bg-light: oklch(0.2 0.055 250);
-    --text: oklch(0.96 0.1 250);
-    --text-muted: oklch(0.76 0.1 250);
-    --highlight: oklch(0.5 0.11 250);
-    --border: 1px solid oklch(0.4 0.11 250);
-    --border-muted: oklch(0.3 0.11 250);
-    --primary: oklch(0.76 0.11 250);
-    --secondary: oklch(0.76 0.11 70);
-    --danger: oklch(0.7 0.11 30);
-    --warning: oklch(0.7 0.11 100);
-    --success: oklch(0.7 0.11 160);
-    --info: oklch(0.7 0.11 260);
-    --stars: white;
-    --tile-bg: var(--bg-light);
-}
-.day {
-    --bg-dark: oklch(0.92 0.085 255);
-    --bg: oklch(0.6093 0.1819 257.29);
-    --bg-light: oklch(0.7931 0.1175 222.61);
+    /* Common variables */
     --text: oklch(0.96 0.1 250);
     --text-muted: oklch(0.4 0.17 255);
     --highlight: oklch(1 0.17 255);
@@ -31,8 +11,42 @@
     --warning: oklch(0.5 0.17 100);
     --success: oklch(0.5 0.17 160);
     --info: oklch(0.5 0.17 260);
+
+    /* Default (night / base theme) */
+    --bg-dark: oklch(0.1 0.055 250);
+    --bg: oklch(0.15 0.055 250);
+    --bg-light: oklch(0.2 0.055 250);
+    --stars: white;
+    --tile-bg: var(--bg-light);
+}
+
+.day {
+    --bg-dark: oklch(0.92 0.085 255);
+    --bg: oklch(0.6093 0.1819 257.29);
+    --bg-light: oklch(0.7931 0.1175 222.61);
     --stars: transparent;
     --tile-bg: transparent;
+}
+
+.sunrise {
+    --bg-dark: oklch(0.92 0.085 255);
+    --bg: #FD746C;
+    --bg-light: #F56217;
+    --stars: transparent;
+    --tile-bg: transparent;
+}
+
+.sunset {
+    --bg-dark: oklch(0.92 0.085 255);
+    --bg: #F56217;
+    --bg-light: #0B486B;
+    --stars: transparent;
+    --tile-bg: transparent;
+}
+
+.home {
+    --bg: oklch(0.2 0.05 250);
+    --bg-light: oklch(0.35 0.06 280);
 }
 
 a, button, select, option {
@@ -48,6 +62,15 @@ body {
     font-family: "Rubik";
     color: var(--text);
     overflow: hidden;
+    display: flex;
+    align-items: center;
+
+    background-color: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+    background-image: 
+        radial-gradient(2px 2px at 20% 30%, var(--stars), transparent),
+        radial-gradient(1.5px 1.5px at 70% 60%, var(--stars), transparent),
+        radial-gradient(1px 1px at 80% 20%, var(--stars), transparent),
+        linear-gradient(to bottom, var(--bg-light), var(--bg));
 }
 
 #waiting {
@@ -80,15 +103,52 @@ body {
     width: 100%;
     height: 100%;
 
-    background-color: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
-    background-image: 
-        radial-gradient(2px 2px at 20% 30%, var(--stars), transparent),
-        radial-gradient(1.5px 1.5px at 70% 60%, var(--stars), transparent),
-        radial-gradient(1px 1px at 80% 20%, var(--stars), transparent),
-        linear-gradient(to bottom, var(--bg-light), var(--bg));
-
     padding: 25px;
 }
+
+#saved {
+    width: 20%;
+    height: 90%;
+    margin-right: 2vw;
+    border: 5px solid var(--highlight);
+    border: var(--border);
+    border-top: 1px solid var(--highlight);
+    backdrop-filter: blur(2px);
+    border-radius: 1em;
+    background: inherit;
+
+    box-shadow: inset 0 0 8px 1px hsl(0, 0%, 100%, 0.3);
+    display: none;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 1.5vw 0.75vw;
+}
+    #add {
+        width: 100%;
+        height: 5vh;
+        border: var(--border);
+        border-top: 1px solid var(--highlight);
+        border-radius: 7px;
+        background: transparent;
+        color: var(--text-muted);
+        font-weight: 700;
+    }
+    #saved > ul {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        height: 100%;
+        gap: 1vw;
+    }
+        #saved > ul > li {
+            font-size: 2rem;
+            border: var(--border);
+            border-top: 1px solid var(--highlight);
+            border-radius: 10px;
+            width: 100%;
+            text-align: center;
+            padding: 0.75vw 0.5vw;
+        }
 
 nav {
     display: flex;
@@ -122,7 +182,7 @@ ul {
 }
 
 #logo {
-    width: 3rem;
+    width: 7rem;
 }
 
 #unitsButtons {
@@ -133,7 +193,7 @@ ul {
         background: none;
         border: none;
         color: var(--text);
-        transition: color 0.3s ease;
+        transition: color 0.15s ease;
     }
 
     .unitBtn:hover {
@@ -188,7 +248,7 @@ input:focus {
     height: 100%;
 }
 
-    #home-logo { width: 12.5vw; }
+    #home-logo { width: 15vw; }
     p { font-size: 1.25rem; }
 
     #brief {
@@ -200,6 +260,25 @@ input:focus {
         width: 100%;
         height: 60%;
     }
+
+        #saveBtn {
+            padding: 0 1vw;
+            width: 7vw;
+            margin-bottom: auto;
+            margin-top: 0.5vw;
+            border: var(--border);
+            border-top: 1px solid var(--highlight);
+            color: var(--text);
+            backdrop-filter: blur(2px);
+            border-radius: 1em;
+            background: inherit;
+
+            box-shadow: inset 0 0 8px 1px hsl(0, 0%, 100%, 0.3);
+            transition: all 0.1s ease;
+        }
+        #saveBtn:hover {
+            background-color: var(--bg);
+        }
 
         #weather-img {
             width: 15vw;
@@ -226,6 +305,10 @@ input:focus {
                 #name > h2 {
                     position: absolute;
                     font-size: 3.5rem;
+                    max-width: 100%;
+                    word-wrap: break-word;
+                    overflow-wrap: break-word;
+                    text-align: left;
                 }
 
             #brief-info > h2, #name > h1 {

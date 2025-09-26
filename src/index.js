@@ -1,10 +1,39 @@
 import "./css/reset.css";
 import "./css/styles.css";
-import { loadHome, loadResult } from "./load";
+import {
+  loadHome,
+  loadLocations,
+  loadResult,
+  searchCity,
+  hideWaiting,
+} from "./load";
 
 const searchBar = document.getElementById("searchInput");
-const waitingDiv = document.getElementById("waiting");
 const unitButtons = document.querySelectorAll(".unitBtn");
+const icon = document.getElementById("icon");
+const locationsBtn = document.getElementById("locations");
+
+icon.addEventListener("click", (e) => {
+  e.preventDefault();
+  loadHome();
+});
+
+if (localStorage.length === 1) {
+  const list = {
+    locations: Array.from(new Set()),
+  };
+  localStorage.setItem("list", JSON.stringify(list));
+}
+
+locationsBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  const saved = document.getElementById("saved");
+
+  saved.style.display = saved.style.display === "none" ? "flex" : "none";
+  saved.style.visibility =
+    saved.style.visibility === "hidden" ? "visible" : "hidden";
+  loadLocations();
+});
 
 searchBar.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
@@ -20,21 +49,11 @@ searchBar.addEventListener("keydown", (event) => {
 for (const button of unitButtons) {
   button.addEventListener("click", (e) => {
     e.preventDefault();
-    localStorage.setItem("unit", button.id);
+    const newPref = { pref: button.id };
+    localStorage.setItem("unit", JSON.stringify(newPref));
     if (document.getElementById("name"))
       loadResult(document.querySelector("h2").innerText);
   });
-}
-
-async function searchCity(city) {
-  try {
-    showWaiting();
-    await loadResult(city);
-  } catch (err) {
-    console.error(err);
-  } finally {
-    hideWaiting();
-  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -44,11 +63,3 @@ document.addEventListener("DOMContentLoaded", () => {
       hideWaiting();
     });
 });
-
-function showWaiting() {
-  waitingDiv.classList.add("active");
-}
-
-function hideWaiting() {
-  waitingDiv.classList.remove("active");
-}

@@ -1,34 +1,50 @@
 import more from "./assets/icons/more.svg";
-import logo from "./assets/icons/logo.svg";
+import logo from "./assets/icons/Cyclone.png";
 import { getCountry, getWeather } from "./api";
+
+const waitingDiv = document.getElementById("waiting");
 
 const icons = importAll(
   require.context("./assets/icons/weather", false, /\.svg$/),
 );
-
 const conditionToIcon = {
   Partiallycloudy: "sunnyUnclear",
   Clear: "sunnyClear",
   Rain: "sunnyRain",
   Overcast: "sunnyCloudy",
+  Snow: "rain",
 
   NightPartiallycloudy: "nightUnclear",
   NightClear: "nightClear",
   NightRain: "nightRain",
   NightOvercast: "nightCloudy",
 };
+const unit = checkUnit();
 
 export async function loadResult(city) {
+  loadLocations();
+  document.getElementById("unitsButtons").style.display = "flex";
   city = capitalize(city);
-  const unit = checkUnit();
   const weatherData = await getWeather(city);
   const mainDiv = document.getElementById("main");
   const country = await getCountry(city);
   const hour = weatherData.current.time.split(":")[0];
-  const timeOfDay = hour < 6 || hour > 18 ? "" : "day";
-  document.getElementById("content").classList = timeOfDay;
+  let timeOfDay = "";
+  if (hour >= 6 && hour < 9) {
+    timeOfDay = "sunrise";
+  } else if (hour >= 9 && hour < 18) {
+    timeOfDay = "day";
+  } else if (hour >= 18 && hour < 21) {
+    timeOfDay = "sunset";
+  } else {
+    timeOfDay = "";
+  }
+  let saveBtn = ``;
+  saveBtn = `<button id="saveBtn">Save City</button>`;
+  document.querySelector("body").classList = timeOfDay;
   mainDiv.innerHTML = `
         <div id="brief">
+            ${saveBtn}
             <img src="#" id="weather-img">
             <div id="brief-info">
                 <div id="name">
@@ -74,27 +90,61 @@ export async function loadResult(city) {
         </div>
     `;
 
-  function getTemp(temp, unit) {
-    return unit === "fahrenheit"
-      ? `${Math.round(temp)}°F`
-      : `${Math.round(toCelsius(temp))}°C`;
+  if (country.length < 5 || city.length > 15) {
+    document.getElementById("name").style.justifyContent = "flex-start";
   }
 
-  function getFutureDateLabel(daysFromToday) {
-    const date = new Date();
-    date.setDate(date.getDate() + daysFromToday);
+  if (saveBtn !== ``) {
+    const saveBtnEl = document.getElementById("saveBtn");
+    const list = JSON.parse(localStorage.getItem("list"));
 
-    return date.toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-    });
+    // Check if city already exists in list
+    const exists = list.locations.some((loc) => loc.city === city);
+
+    if (exists) {
+      saveBtnEl.textContent = "Delete City";
+      saveBtnEl.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        // Remove city from list
+        list.locations = list.locations.filter((loc) => loc.city !== city);
+        localStorage.setItem("list", JSON.stringify(list));
+
+        saveBtnEl.style.backgroundColor = "var(--danger)";
+        setTimeout(() => {
+          saveBtnEl.style.display = "none";
+        }, 2000);
+
+        loadLocations();
+      });
+    } else {
+      saveBtnEl.textContent = "Save City";
+      saveBtnEl.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        // Use Set trick for uniqueness
+        const locationsSet = new Set(list.locations.map(JSON.stringify));
+        locationsSet.add(JSON.stringify({ city, country }));
+        list.locations = Array.from(locationsSet).map(JSON.parse);
+
+        localStorage.setItem("list", JSON.stringify(list));
+
+        saveBtnEl.style.backgroundColor = "var(--success)";
+        setTimeout(() => {
+          saveBtnEl.style.display = "none";
+        }, 2000);
+
+        loadLocations();
+      });
+    }
   }
 
   loadImages();
   const weatherImg = document.getElementById("weather-img");
   const tableTiles = document.querySelectorAll(".table-img");
+  console.log(timeOfDay);
   const conditions =
-    timeOfDay === "day"
+    timeOfDay === "day" || timeOfDay === "sunset"
       ? weatherData.current.conditions.split(",")[0]
       : `Night${weatherData.current.conditions.split(",")[0]}`;
   console.log(conditions);
@@ -102,23 +152,57 @@ export async function loadResult(city) {
   for (let i = 0; i < tableTiles.length; i++) {
     const forecastConditions =
       weatherData.forecast[`day${i}`].conditions.split(",")[0];
+    console.log(forecastConditions);
     tableTiles[i].src = icons[conditionToIcon[forecastConditions]];
-  }
-
-  function toCelsius(fahrenheit) {
-    return ((fahrenheit - 32) * 5) / 9;
   }
 }
 
 export function loadHome() {
-  document.getElementById("content").classList = "day";
+  loadLocations();
+  document.querySelector("body").classList = "home";
   const mainDiv = document.getElementById("main");
   mainDiv.innerHTML = `
         <img id="home-logo" src="#">
-        <p>This is a pretty weather app mate</p>
     `;
+  document.getElementById("unitsButtons").style.display = "none";
   loadImages();
   document.getElementById("home-logo").src = logo;
+}
+
+export function loadLocations() {
+  const savedList = document.getElementById("saved-list");
+  savedList.innerHTML = ``; // clear old DOM nodes
+
+  const list = JSON.parse(localStorage.getItem("list"));
+  // ensure we always have insertion order preserved
+  const locations = Array.from(new Set(list.locations.map(JSON.stringify))).map(
+    JSON.parse,
+  );
+
+  locations.forEach(async (loc) => {
+    const locData = await getWeather(loc.city);
+
+    // create elements safely
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.id = loc.city;
+    a.style.display = "flex";
+    a.style.justifyContent = "space-between";
+    a.style.fontSize = "1.4rem";
+    a.innerHTML = `<span>${loc.city}</span><span>${getTemp(
+      locData.current.temp,
+      unit,
+    )}</span>`;
+
+    // attach click listener
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      searchCity(loc.city);
+    });
+
+    li.appendChild(a);
+    savedList.appendChild(li);
+  });
 }
 
 // ----------------------------------------------------------------------
@@ -147,7 +231,8 @@ function capitalize(word) {
 
 function checkUnit() {
   if (localStorage.getItem("unit") !== null) {
-    return localStorage.getItem("unit");
+    const unit = JSON.parse(localStorage.getItem("unit"));
+    return unit.pref;
   } else {
     const dialogBox = document.getElementById("dialog");
     const form = document.querySelector("form");
@@ -157,10 +242,49 @@ function checkUnit() {
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-      const value = document.querySelector("select").value;
-      localStorage.setItem("unit", value);
+      const value = { pref: document.querySelector("select").value };
+      localStorage.setItem("unit", JSON.stringify(value));
       console.log("submitted", value);
       dialogBox.style.visibility = "hidden";
     });
   }
+}
+
+function getTemp(temp, unit) {
+  return unit === "fahrenheit"
+    ? `${Math.round(temp)}°F`
+    : `${Math.round(toCelsius(temp))}°C`;
+}
+
+function getFutureDateLabel(daysFromToday) {
+  const date = new Date();
+  date.setDate(date.getDate() + daysFromToday);
+
+  return date.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+  });
+}
+
+function toCelsius(fahrenheit) {
+  return ((fahrenheit - 32) * 5) / 9;
+}
+
+export async function searchCity(city) {
+  try {
+    showWaiting();
+    await loadResult(city);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    hideWaiting();
+  }
+}
+
+export function showWaiting() {
+  waitingDiv.classList.add("active");
+}
+
+export function hideWaiting() {
+  waitingDiv.classList.remove("active");
 }

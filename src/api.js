@@ -4,7 +4,6 @@ export async function getWeather(city) {
     `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}?key=${keyWeather}`,
   );
   const weatherData = await response.json();
-  console.log(weatherData);
   return {
     current: {
       temp: weatherData.days[0].temp,
