@@ -356,7 +356,7 @@ input:focus {
     top: 0;
     width: 100vw;
     height: 100vh;
-    background: var(--bg);
+    background-color: var(--bg);
     position: absolute;
     display: flex;
     justify-content: center;
@@ -627,4 +627,48 @@ input:focus {
                     tr > td {
                         font-size: 1.4rem;
                     }
+
+    #dialog {
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: var(--bg);
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        visibility: hidden;
+    }
+        form {
+            width: 90%;
+            height: 15%;
+            border: var(--border);
+            padding: 1vw 2vw;
+            border-radius: 15px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+            form > div {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+                select {
+                    padding: 5px;
+                    color: var(--text);
+                }
+                #submit {
+                    color: var(--text-muted);
+                    transition: all 0.3s ease;
+                }
+                #submit:hover {
+                    background-color: var(--text-muted);
+                    color: var(--bg-light);
+                }
+                select, #submit {
+                    background-color: var(--bg-light);
+                    border: none;
+                    border-radius: 5px;
+                }
 }
