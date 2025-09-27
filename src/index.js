@@ -8,7 +8,11 @@ const locationsBtn = document.getElementById("locations");
 
 icon.addEventListener("click", (e) => {
   e.preventDefault();
-  loadHome();
+  Promise.resolve()
+    .then(() => loadHome())
+    .finally(() => {
+      hideWaiting();
+    });
 });
 
 if (localStorage.length === 1) {
