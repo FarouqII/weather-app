@@ -1,15 +1,8 @@
 import "./css/reset.css";
 import "./css/styles.css";
-import {
-  loadHome,
-  loadLocations,
-  loadResult,
-  searchCity,
-  hideWaiting,
-} from "./load";
+import { loadHome, loadLocations, searchCity, hideWaiting } from "./load";
 
 const searchBar = document.getElementById("searchInput");
-const unitButtons = document.querySelectorAll(".unitBtn");
 const icon = document.getElementById("icon");
 const locationsBtn = document.getElementById("locations");
 
@@ -45,16 +38,6 @@ searchBar.addEventListener("keydown", (event) => {
     searchBar.value = "";
   }
 });
-
-for (const button of unitButtons) {
-  button.addEventListener("click", (e) => {
-    e.preventDefault();
-    const newPref = { pref: button.id };
-    localStorage.setItem("unit", JSON.stringify(newPref));
-    if (document.getElementById("name"))
-      loadResult(document.querySelector("h2").innerText);
-  });
-}
 
 document.addEventListener("DOMContentLoaded", () => {
   Promise.resolve()

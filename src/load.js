@@ -19,13 +19,14 @@ const conditionToIcon = {
   NightRain: "nightRain",
   NightOvercast: "nightCloudy",
 };
-const unit = checkUnit();
 
 export async function loadResult(city) {
   loadLocations();
-  document.getElementById("unitsButtons").style.display = "flex";
   city = capitalize(city);
+  const unit = checkUnit();
   const weatherData = await getWeather(city);
+  //CONSOLE LOG
+  console.log(weatherData);
   const mainDiv = document.getElementById("main");
   const country = await getCountry(city);
   const hour = weatherData.current.time.split(":")[0];
@@ -43,8 +44,11 @@ export async function loadResult(city) {
   saveBtn = `<button id="saveBtn">Save City</button>`;
   document.querySelector("body").classList = timeOfDay;
   mainDiv.innerHTML = `
+        <div style="display: flex; gap: 5px; margin-top: 5px; margin-bottom: auto;">
+          <div id="unitsButtons"><button id="fahrenheit" class="unitBtn">F</button> / <button id="celsius" class="unitBtn">C</button></div>
+          ${saveBtn}
+        </div>
         <div id="brief">
-            ${saveBtn}
             <img src="#" id="weather-img">
             <div id="brief-info">
                 <div id="name">
@@ -56,39 +60,51 @@ export async function loadResult(city) {
         </div>
         <div id="details">
             <div class="details-tile">
-                <h3 style="font-size: 2rem;">Real Feel</h3>
-                <h1 style="font-size: 5rem;">${getTemp(weatherData.current.feel, unit)}</h1>
+                <h3>Real Feel</h3>
+                <h1>${getTemp(weatherData.current.feel, unit)}</h1>
             </div>
             <div class="details-tile">
-                <h3 style="font-size: 2rem;">Humidity</h3>
-                <h1 style="font-size: 5rem;">${Math.round(weatherData.current.humidity)}%</h1>
+                <h3>Humidity</h3>
+                <h1>${Math.round(weatherData.current.humidity)}%</h1>
             </div>
             <div class="details-tile">
+              <div class="table-wrapper">
                 <table>
-                    <tbody>
-                        <tr>
-                            <th>Tomorrow</th>
-                            <th>${getFutureDateLabel(2)}</th>
-                            <th>${getFutureDateLabel(3)}</th>
-                            <th>${getFutureDateLabel(4)}</th>
-                        </tr>
-                        <tr>
-                            <td><img class="table-img" src="#"></td>
-                            <td><img class="table-img" src="#"></td>
-                            <td><img class="table-img" src="#"></td>
-                            <td><img class="table-img" src="#"></td>
-                        </tr>
-                        <tr>
-                            <td>${getTemp(weatherData.forecast.day0.temp, unit)}</td>
-                            <td>${getTemp(weatherData.forecast.day1.temp, unit)}</td>
-                            <td>${getTemp(weatherData.forecast.day2.temp, unit)}</td>
-                            <td>${getTemp(weatherData.forecast.day3.temp, unit)}</td>
-                        </tr>
-                    </tbody>
+                  <tbody>
+                    <tr>
+                      <th>Tomorrow</th>
+                      <th>${getFutureDateLabel(2)}</th>
+                      <th>${getFutureDateLabel(3)}</th>
+                      <th>${getFutureDateLabel(4)}</th>
+                    </tr>
+                    <tr>
+                      <td><img class="table-img" src="#"></td>
+                      <td><img class="table-img" src="#"></td>
+                      <td><img class="table-img" src="#"></td>
+                      <td><img class="table-img" src="#"></td>
+                    </tr>
+                    <tr>
+                      <td>${getTemp(weatherData.forecast.day0.temp, unit)}</td>
+                      <td>${getTemp(weatherData.forecast.day1.temp, unit)}</td>
+                      <td>${getTemp(weatherData.forecast.day2.temp, unit)}</td>
+                      <td>${getTemp(weatherData.forecast.day3.temp, unit)}</td>
+                    </tr>
+                  </tbody>
                 </table>
+              </div>
             </div>
         </div>
     `;
+
+  const unitButtons = document.querySelectorAll(".unitBtn");
+  for (const button of unitButtons) {
+    button.addEventListener("click", (e) => {
+      e.preventDefault();
+      const newPref = { pref: button.id };
+      localStorage.setItem("unit", JSON.stringify(newPref));
+      loadResult(city);
+    });
+  }
 
   if (country.length < 5 || city.length > 15) {
     document.getElementById("name").style.justifyContent = "flex-start";
@@ -142,17 +158,14 @@ export async function loadResult(city) {
   loadImages();
   const weatherImg = document.getElementById("weather-img");
   const tableTiles = document.querySelectorAll(".table-img");
-  console.log(timeOfDay);
   const conditions =
     timeOfDay === "day" || timeOfDay === "sunset"
       ? weatherData.current.conditions.split(",")[0]
       : `Night${weatherData.current.conditions.split(",")[0]}`;
-  console.log(conditions);
   weatherImg.src = icons[conditionToIcon[conditions]];
   for (let i = 0; i < tableTiles.length; i++) {
     const forecastConditions =
       weatherData.forecast[`day${i}`].conditions.split(",")[0];
-    console.log(forecastConditions);
     tableTiles[i].src = icons[conditionToIcon[forecastConditions]];
   }
 }
@@ -164,12 +177,12 @@ export function loadHome() {
   mainDiv.innerHTML = `
         <img id="home-logo" src="#">
     `;
-  document.getElementById("unitsButtons").style.display = "none";
   loadImages();
   document.getElementById("home-logo").src = logo;
 }
 
 export function loadLocations() {
+  const unit = checkUnit();
   const savedList = document.getElementById("saved-list");
   savedList.innerHTML = ``; // clear old DOM nodes
 
@@ -244,7 +257,6 @@ function checkUnit() {
       e.preventDefault();
       const value = { pref: document.querySelector("select").value };
       localStorage.setItem("unit", JSON.stringify(value));
-      console.log("submitted", value);
       dialogBox.style.visibility = "hidden";
     });
   }
